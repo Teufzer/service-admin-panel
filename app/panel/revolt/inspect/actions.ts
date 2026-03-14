@@ -26,7 +26,7 @@ function userToResult(
     // TODO hard link
     iconURL: user
       ? user.avatar
-        ? `https://https://cdn.stoatusercontent.com//avatars/${user.avatar._id}`
+        ? `https://cdn.stoatusercontent.com/avatars/${user.avatar._id}`
         : `https://api.stoat.chat/users/${user._id}/default_avatar`
       : undefined,
     link: `/panel/revolt/inspect/user/${id}`,
@@ -47,7 +47,7 @@ function channelToResult(channel: API.Channel): SearchResult {
     title: channelDisplayName(channel),
     // TODO: hard link
     iconURL: (channel as any).icon
-      ? `https://https://cdn.stoatusercontent.com//icons/${(channel as any).icon._id}`
+      ? `https://cdn.stoatusercontent.com/icons/${(channel as any).icon._id}`
       : "",
     link: `/panel/revolt/inspect/channel/${channel._id}`,
   };
@@ -60,7 +60,7 @@ function serverToResult(server: API.Server): SearchResult {
     title: server.name,
     // TODO: hard link
     iconURL: (server as any).icon
-      ? `https://https://cdn.stoatusercontent.com//icons/${(server as any).icon._id}`
+      ? `https://cdn.stoatusercontent.com/icons/${(server as any).icon._id}`
       : "",
     link: `/panel/revolt/inspect/server/${server._id}`,
   };
