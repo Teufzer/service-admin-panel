@@ -4,6 +4,8 @@
     "eslint-plugin-react-compiler"
   ],
   "rules": {
-    "react-compiler/react-compiler": "error"
+    "react-compiler/react-compiler": "error",
+    "react/no-unescaped-entities": "off",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }
