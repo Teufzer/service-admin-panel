@@ -10,6 +10,8 @@ import { Flex } from "@radix-ui/themes";
 
 import styles from "./layout.module.css";
 
+export const dynamic = 'force-dynamic';
+
 const HR_EXISTS = existsSync("app/panel/hr");
 const MOD_EXISTS = existsSync("app/panel/mod");
 

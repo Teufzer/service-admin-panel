@@ -5,6 +5,8 @@ import { Metadata } from "next";
 
 import { Search } from "./Search";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Search and Inspect",
   description: "Find and inspect content on the platform.",

@@ -5,9 +5,11 @@ import { Text } from "@radix-ui/themes";
 
 import pkg from "../../package.json";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
-  title: "Stoat Dashboard",
-  description: "Integrated RBAC and content moderation tool for Stoat.",
+  title: "Vokx Dashboard",
+  description: "Integrated moderation tool for Vokx.",
 };
 
 export default async function Home() {
