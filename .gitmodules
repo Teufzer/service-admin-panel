@@ -8,9 +8,3 @@
 [submodule "server/modules/discover-rankings"]
 	path = server/modules/discover-rankings
 	url = https://github.com/stoatchat/service-admin-panel-discover-rankings.git
-[submodule "app/panel/hr"]
-	path = app/panel/hr
-	url = https://github.com/stoatchat/service-admin-panel-hr.git
-[submodule "app/panel/mod"]
-	path = app/panel/mod
-	url = https://github.com/stoatchat/service-admin-panel-moderation.git
