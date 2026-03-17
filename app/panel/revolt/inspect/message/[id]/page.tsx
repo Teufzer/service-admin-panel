@@ -1,10 +1,14 @@
 import { getScopedUser } from "@/lib/auth";
 import { RBAC_PERMISSION_MODERATION_AGENT } from "@/lib/auth/rbacInternal";
+import { fetchStrikes } from "@/lib/database/revolt/safety_strikes";
+import { fetchUserById } from "@/lib/database/revolt/users";
 import { col } from "@/lib/db";
 import { Badge, Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+import { ModerationActions } from "./ModerationActions";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -28,8 +32,9 @@ export default async function MessageInspect({ params }: Props) {
   const priorContext: any[] = content?._prior_context ?? [];
   const leadingContext: any[] = content?._leading_context ?? [];
 
+  const authorId: string | undefined = content?.author;
   const allAuthorIds = [
-    content?.author,
+    authorId,
     ...priorContext.map((m: any) => m.author),
     ...leadingContext.map((m: any) => m.author),
   ].filter(Boolean);
@@ -38,7 +43,7 @@ export default async function MessageInspect({ params }: Props) {
   const userDocs = uniqueAuthorIds.length
     ? await col("users")
         .find({ _id: { $in: uniqueAuthorIds } } as any, {
-          projection: { _id: 1, username: 1, discriminator: 1 },
+          projection: { _id: 1, username: 1, discriminator: 1, flags: 1 },
         })
         .toArray()
     : [];
@@ -46,6 +51,9 @@ export default async function MessageInspect({ params }: Props) {
   const usernameMap = Object.fromEntries(
     userDocs.map((u: any) => [u._id, `${u.username}#${u.discriminator}`])
   );
+
+  const authorUser = authorId ? userDocs.find((u: any) => u._id === authorId) as any : null;
+  const authorStrikes = authorId ? await fetchStrikes(authorId) : [];
 
   const statusColor = (s?: string) =>
     s === "Resolved" ? "green" : s === "Rejected" ? "gray" : "orange";
@@ -139,6 +147,18 @@ export default async function MessageInspect({ params }: Props) {
           )}
         </Flex>
       </Card>
+
+      {/* Actions de modération */}
+      {authorId && (
+        <ModerationActions
+          reportId={id}
+          reportStatus={report.status ?? "Created"}
+          messageId={content?._id ?? report.content?.id ?? ""}
+          authorId={authorId}
+          authorFlags={authorUser?.flags ?? 0}
+          authorStrikes={authorStrikes}
+        />
+      )}
 
       {/* Contenu du snapshot */}
       {!snapshot ? (
