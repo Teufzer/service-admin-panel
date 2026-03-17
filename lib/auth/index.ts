@@ -95,36 +95,3 @@ export async function getUserWithScopes<T extends string>(
   ];
 }
 
-/**
- * Check which of the given scopes are allowed to the given user
- * @param scopes Scopes to check
- * @returns User email and scope information
- */
-export async function getUserWithScopes<T extends string>(
-  scopes: T[],
-): Promise<[string, Record<T, boolean>]> {
-  if (IS_AUTH_DISABLED) {
-    return [
-      OWNER_EMAIL,
-      scopes.reduce(
-        (r, s) => ({ ...r, [s]: true }),
-        {} as Record<T, boolean>,
-      ),
-    ];
-  }
-
-  const session = await getServerSession();
-  if (!session?.user?.email) return redirect("/panel/access-denied");
-
-  const permissions = await flattenPermissionsFor({
-    email: session.user.email,
-  });
-
-  return [
-    session.user.email,
-    scopes.reduce(
-      (r, s) => ({ ...r, [s]: checkPermission(permissions, s) }),
-      {} as Record<T, boolean>,
-    ),
-  ];
-}
