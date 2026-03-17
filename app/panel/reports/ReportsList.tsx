@@ -1,26 +1,51 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge, Flex, Heading, Text } from "@radix-ui/themes";
+import { Badge, Button, Flex, Heading, Text } from "@radix-ui/themes";
 
 interface Report {
   _id: string;
   author_id?: string;
-  content?: { type?: string; id?: string };
+  content?: { type?: string; id?: string; report_reason?: string };
   additional_context?: string;
   status?: string;
-  notes?: string;
 }
 
 export function ReportsList() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [acting, setActing] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/reports")
-      .then((r) => r.json())
-      .then((d) => { setReports(d.reports || []); setLoading(false); });
-  }, []);
+  async function load() {
+    setLoading(true);
+    const res = await fetch("/api/reports");
+    const d = await res.json();
+    setReports(d.reports || []);
+    setLoading(false);
+  }
+
+  async function doAction(reportId: string, action: "resolve" | "reject") {
+    setActing(reportId);
+    await fetch(`/api/reports/${reportId}/action`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action }),
+    });
+    setActing(null);
+    load();
+  }
+
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const statusColor = (s?: string) =>
+    s === "Resolved" ? "green" : s === "Rejected" ? "gray" : "orange";
+
+  const contentLink = (id?: string, type?: string) => {
+    if (!id) return null;
+    if (type === "User") return `/panel/revolt/inspect/user/${id}`;
+    if (type === "Server") return `/panel/revolt/inspect/server/${id}`;
+    return `/panel/revolt/inspect/user/${id}`;
+  };
 
   return (
     <Flex direction="column" gap="3">
@@ -36,42 +61,72 @@ export function ReportsList() {
             <Flex
               key={r._id}
               direction="column"
-              gap="1"
+              gap="2"
               p="3"
               style={{ borderBottom: "1px solid var(--gray-4)" }}
             >
-              <Flex align="center" gap="2">
-                <Badge color={r.status === "Resolved" ? "green" : r.status === "Rejected" ? "gray" : "orange"}>
-                  {r.status || "En attente"}
-                </Badge>
-                <Text size="2" weight="bold">
-                  {r.content?.type || "Contenu"} — ID: {r.content?.id || "N/A"}
-                </Text>
+              <Flex align="center" justify="between" gap="2" wrap="wrap">
+                <Flex align="center" gap="2">
+                  <Badge color={statusColor(r.status)}>
+                    {r.status || "Created"}
+                  </Badge>
+                  <Text size="2" weight="bold">
+                    {r.content?.type || "Contenu"}
+                    {r.content?.report_reason ? ` — ${r.content.report_reason}` : ""}
+                  </Text>
+                </Flex>
+                {(!r.status || r.status === "Created") && (
+                  <Flex gap="2">
+                    <Button
+                      size="1"
+                      color="green"
+                      variant="soft"
+                      disabled={acting === r._id}
+                      onClick={() => doAction(r._id, "resolve")}
+                    >
+                      Résoudre
+                    </Button>
+                    <Button
+                      size="1"
+                      color="gray"
+                      variant="soft"
+                      disabled={acting === r._id}
+                      onClick={() => doAction(r._id, "reject")}
+                    >
+                      Rejeter
+                    </Button>
+                  </Flex>
+                )}
               </Flex>
+
               <Text size="1" color="gray">
-                Signalé par : {r.author_id || "anonyme"} · Report ID: {r._id}
+                ID: {r._id}
               </Text>
+
               {r.additional_context && (
-                <Text size="2" style={{ opacity: 0.8 }}>
+                <Text size="2" style={{ opacity: 0.8, fontStyle: "italic" }}>
                   {r.additional_context}
                 </Text>
               )}
-              {r.content?.id && (
-                <Flex gap="2" mt="1">
+
+              <Flex gap="3" wrap="wrap">
+                {r.author_id && (
                   <a
-                    href={`/panel/revolt/inspect/${r.author_id}`}
+                    href={`/panel/revolt/inspect/user/${r.author_id}`}
                     style={{ fontSize: "12px", color: "var(--blue-9)" }}
                   >
-                    Voir l'auteur du signalement →
+                    Auteur du signalement ({r.author_id.slice(-6)}) →
                   </a>
+                )}
+                {r.content?.id && (
                   <a
-                    href={`/panel/revolt/inspect/${r.content.id}`}
+                    href={contentLink(r.content.id, r.content.type) ?? "#"}
                     style={{ fontSize: "12px", color: "var(--red-9)" }}
                   >
-                    Voir le contenu signalé →
+                    Contenu signalé: {r.content.type} ({r.content.id.slice(-6)}) →
                   </a>
-                </Flex>
-              )}
+                )}
+              </Flex>
             </Flex>
           ))}
         </Flex>

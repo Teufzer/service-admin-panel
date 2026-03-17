@@ -52,7 +52,7 @@ export function UserRow({ user, onAction }: { user: User; onAction: () => void }
           variant="soft"
           asChild
         >
-          <a href={`/panel/revolt/inspect/${user._id}`}>Inspecter</a>
+          <a href={`/panel/revolt/inspect/user/${user._id}`}>Inspecter</a>
         </Button>
         {!isBanned && !isDeleted ? (
           <Button

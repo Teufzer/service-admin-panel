@@ -68,7 +68,10 @@ export function ServersList() {
               </Flex>
               <Flex gap="2">
                 <Button size="1" variant="soft" asChild>
-                  <a href={`/panel/revolt/inspect/${s.owner}`}>Voir owner</a>
+                  <a href={`/panel/revolt/inspect/server/${s._id}`}>Inspecter</a>
+                </Button>
+                <Button size="1" variant="soft" asChild>
+                  <a href={`/panel/revolt/inspect/user/${s.owner}`}>Voir owner</a>
                 </Button>
                 <Button size="1" variant="soft" color="blue" asChild>
                   <a href={`https://vokx.org/server/${s._id}`} target="_blank">
