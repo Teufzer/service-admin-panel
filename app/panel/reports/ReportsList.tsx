@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge, Button, Flex, Heading, Text } from "@radix-ui/themes";
+import { Badge, Button, Callout, Flex, Heading, Text } from "@radix-ui/themes";
 
 interface Report {
   _id: string;
@@ -14,25 +14,42 @@ interface Report {
 export function ReportsList() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [acting, setActing] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
-    const res = await fetch("/api/reports");
-    const d = await res.json();
-    setReports(d.reports || []);
-    setLoading(false);
+    setError(null);
+    try {
+      const res = await fetch("/api/reports");
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Erreur lors du chargement");
+      setReports(d.reports || []);
+    } catch (e: any) {
+      setError(e.message || "Impossible de charger les signalements");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function doAction(reportId: string, action: "resolve" | "reject") {
     setActing(reportId);
-    await fetch(`/api/reports/${reportId}/action`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action }),
-    });
-    setActing(null);
-    load();
+    setActionError(null);
+    try {
+      const res = await fetch(`/api/reports/${reportId}/action`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Échec de l'action");
+      await load();
+    } catch (e: any) {
+      setActionError(e.message || "Une erreur est survenue");
+    } finally {
+      setActing(null);
+    }
   }
 
   useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -51,8 +68,18 @@ export function ReportsList() {
     <Flex direction="column" gap="3">
       <Heading size="4">Signalements ({reports.length})</Heading>
 
+      {actionError && (
+        <Callout.Root color="red" size="1">
+          <Callout.Text>{actionError}</Callout.Text>
+        </Callout.Root>
+      )}
+
       {loading ? (
         <Text color="gray">Chargement...</Text>
+      ) : error ? (
+        <Callout.Root color="red">
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
       ) : reports.length === 0 ? (
         <Text color="gray">Aucun signalement.</Text>
       ) : (

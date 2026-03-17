@@ -16,19 +16,21 @@ import {
   Text,
 } from "@radix-ui/themes";
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const server = await col("servers").findOne({ _id: params.id } as any);
+  const { id } = await params;
+  const server = await col("servers").findOne({ _id: id } as any);
   return { title: server ? `${(server as any).name} - Inspect Server` : "Not Found" };
 }
 
 export default async function ServerInspect({ params }: Props) {
+  const { id } = await params;
   await getScopedUser(RBAC_PERMISSION_MODERATION_AGENT);
 
-  const server = await col("servers").findOne({ _id: params.id } as any) as any;
+  const server = await col("servers").findOne({ _id: id } as any) as any;
   if (!server) notFound();
 
   // Fetch owner
@@ -38,7 +40,7 @@ export default async function ServerInspect({ params }: Props) {
 
   // Fetch channels
   const channelDocs = await col("channels")
-    .find({ server: params.id } as any, {
+    .find({ server: id } as any, {
       projection: { _id: 1, name: 1, channel_type: 1 },
     })
     .limit(50)
@@ -46,7 +48,7 @@ export default async function ServerInspect({ params }: Props) {
 
   // Fetch members (via server_members collection)
   const memberDocs = await col("server_members")
-    .find({ _id: { $regex: `\\.${params.id}$` } } as any)
+    .find({ _id: { $regex: `\\.${id}$` } } as any)
     .limit(100)
     .toArray();
 

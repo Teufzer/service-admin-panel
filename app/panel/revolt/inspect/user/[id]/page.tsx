@@ -33,7 +33,7 @@ import {
 } from "./accountManagement";
 import { UserStrikes } from "./userManagement";
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
 const getUser = cache(async (id: string) => ({
   account: await fetchAccountById(id),
@@ -41,7 +41,8 @@ const getUser = cache(async (id: string) => ({
 }));
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { account, user } = await getUser(params.id);
+  const { id } = await params;
+  const { account, user } = await getUser(id);
   if (!account && !user) return { title: "Not Found" };
   return {
     title:
@@ -53,16 +54,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export const dynamic = "force-dynamic";
 
 export default async function User({ params }: Props) {
+  const { id } = await params;
   await getScopedUser(RBAC_PERMISSION_MODERATION_AGENT);
 
-  const { account, user } = await getUser(params.id);
+  const { account, user } = await getUser(id);
   if (!account && !user) notFound();
 
-  const strikes = await fetchStrikes(params.id);
+  const strikes = await fetchStrikes(id);
 
   // Fetch user's servers
   const memberDocs = await col("server_members")
-    .find({ _id: { $regex: `^${params.id}` } } as any)
+    .find({ _id: { $regex: `^${id}` } } as any)
     .limit(50)
     .toArray();
   const serverIds = memberDocs.map((m: any) => {
@@ -80,7 +82,7 @@ export default async function User({ params }: Props) {
 
   // Fetch bots owned by user
   const botsData = await col("bots")
-    .find({ owner: params.id } as any, {
+    .find({ owner: id } as any, {
       projection: { _id: 1, username: 1, discriminator: 1 },
     })
     .limit(20)
@@ -88,7 +90,7 @@ export default async function User({ params }: Props) {
 
   // Fetch reports by user
   const reportsData = await col("safety_reports")
-    .find({ author_id: params.id } as any)
+    .find({ author_id: id } as any)
     .sort({ _id: -1 } as any)
     .limit(20)
     .toArray();
@@ -137,14 +139,14 @@ export default async function User({ params }: Props) {
               </Flex>
 
               <ManageAccount
-                id={params.id}
+                id={id}
                 attempts={account.lockout?.attempts || 0}
               />
 
               <Flex direction="column" gap="2">
                 <Heading size="2">Email</Heading>
                 <ManageAccountEmail
-                  id={params.id}
+                  id={id}
                   email={account.email}
                   verified={account.verification.status !== "Pending"}
                 />
@@ -153,7 +155,7 @@ export default async function User({ params }: Props) {
               <Flex direction="column" gap="2">
                 <Heading size="2">Multi-Factor Authentication</Heading>
                 <ManageAccountMFA
-                  id={params.id}
+                  id={id}
                   totp={account.mfa?.totp_token?.status === "Enabled"}
                   recovery={account.mfa?.recovery_codes?.length || 0}
                 />
@@ -171,7 +173,7 @@ export default async function User({ params }: Props) {
               </Text>
             </Flex>
             <UserStrikes
-              id={params.id}
+              id={id}
               flags={user?.flags || 0}
               strikes={strikes}
             />
@@ -312,7 +314,7 @@ export default async function User({ params }: Props) {
                 Send a platform notice to this user via DM.
               </Text>
             </Flex>
-            <AlertForm userId={params.id} />
+            <AlertForm userId={id} />
           </Flex>
         </Card>
       </Grid>
@@ -325,7 +327,7 @@ export default async function User({ params }: Props) {
               Recent actions and comments relating to this user.
             </Text>
           </Flex>
-          <Changelog object={{ type: "User", id: params.id }} />
+          <Changelog object={{ type: "User", id: id }} />
         </Flex>
       </Card>
     </>
