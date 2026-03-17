@@ -53,7 +53,7 @@ export function ReportsList() {
               </Text>
               {r.additional_context && (
                 <Text size="2" style={{ opacity: 0.8 }}>
-                  "{r.additional_context}"
+                  {r.additional_context}
                 </Text>
               )}
               {r.content?.id && (

@@ -33,7 +33,7 @@ export function UsersList() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [page, search]);
+  useEffect(() => { load(); }, [page, search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Flex direction="column" gap="3">
