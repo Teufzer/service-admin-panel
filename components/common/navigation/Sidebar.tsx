@@ -16,6 +16,8 @@ import {
   MagnifyingGlassIcon,
   PersonIcon,
   ReaderIcon,
+  LayersIcon,
+  BarChartIcon,
 } from "@radix-ui/react-icons";
 import { Badge, Button, Flex, Heading } from "@radix-ui/themes";
 
@@ -55,6 +57,37 @@ export function Sidebar({
         >
           <Link href="/panel">
             <HomeIcon /> Home
+          </Link>
+        </Button>
+
+        <Heading size="2" color="gray" className="pt-4">
+          Vokx
+        </Heading>
+        <Button
+          variant={pathname === "/panel/users" ? "solid" : "surface"}
+          className="!justify-start"
+          asChild
+        >
+          <Link href="/panel/users">
+            <PersonIcon /> Utilisateurs
+          </Link>
+        </Button>
+        <Button
+          variant={pathname === "/panel/reports" ? "solid" : "surface"}
+          className="!justify-start"
+          asChild
+        >
+          <Link href="/panel/reports">
+            <ExclamationTriangleIcon /> Signalements
+          </Link>
+        </Button>
+        <Button
+          variant={pathname === "/panel/servers" ? "solid" : "surface"}
+          className="!justify-start"
+          asChild
+        >
+          <Link href="/panel/servers">
+            <LayersIcon /> Serveurs
           </Link>
         </Button>
         {/* <Button
