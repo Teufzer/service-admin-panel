@@ -57,11 +57,12 @@ export function ReportsList() {
   const statusColor = (s?: string) =>
     s === "Resolved" ? "green" : s === "Rejected" ? "gray" : "orange";
 
-  const contentLink = (id?: string, type?: string) => {
-    if (!id) return null;
-    if (type === "User") return `/panel/revolt/inspect/user/${id}`;
-    if (type === "Server") return `/panel/revolt/inspect/server/${id}`;
-    return `/panel/revolt/inspect/user/${id}`;
+  const contentLink = (reportId: string, contentId?: string, type?: string) => {
+    if (!contentId) return null;
+    if (type === "User") return `/panel/revolt/inspect/user/${contentId}`;
+    if (type === "Server") return `/panel/revolt/inspect/server/${contentId}`;
+    if (type === "Message") return `/panel/revolt/inspect/message/${reportId}`;
+    return null;
   };
 
   return (
@@ -147,7 +148,7 @@ export function ReportsList() {
                 )}
                 {r.content?.id && (
                   <a
-                    href={contentLink(r.content.id, r.content.type) ?? "#"}
+                    href={contentLink(r._id, r.content.id, r.content.type) ?? "#"}
                     style={{ fontSize: "12px", color: "var(--red-9)" }}
                   >
                     Contenu signalé: {r.content.type} ({r.content.id.slice(-6)}) →
