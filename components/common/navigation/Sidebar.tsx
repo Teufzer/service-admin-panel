@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import {
   BackpackIcon,
   ExclamationTriangleIcon,
+  GearIcon,
   GlobeIcon,
   GroupIcon,
   HomeIcon,
@@ -57,6 +58,15 @@ export function Sidebar({
         >
           <Link href="/panel">
             <HomeIcon /> Home
+          </Link>
+        </Button>
+        <Button
+          variant={pathname === "/panel/settings" ? "solid" : "surface"}
+          className="!justify-start"
+          asChild
+        >
+          <Link href="/panel/settings">
+            <GearIcon /> Paramètres
           </Link>
         </Button>
 
