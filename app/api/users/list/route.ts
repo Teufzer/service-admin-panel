@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   try {
     const users = col("users");
 
-    const query = search
+    const query: any = search
       ? {
           $or: [
             { username: { $regex: search, $options: "i" } },

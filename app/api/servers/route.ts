@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   try {
     const servers = col("servers");
 
-    const query = search
+    const query: any = search
       ? { $or: [{ name: { $regex: search, $options: "i" } }, { _id: search }] }
       : {};
 

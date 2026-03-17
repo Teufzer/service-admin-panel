@@ -11,19 +11,20 @@ export async function POST(request: NextRequest) {
   try {
     const accounts = col("accounts");
     const users = col("users");
+    const query: any = { _id: userId };
 
     switch (action) {
       case "ban":
-        await users.updateOne({ _id: userId }, { $set: { disabled: true } });
-        await accounts.updateOne({ _id: userId }, { $set: { disabled: true } });
+        await users.updateOne(query, { $set: { disabled: true } } as any);
+        await accounts.updateOne(query, { $set: { disabled: true } } as any);
         break;
       case "unban":
-        await users.updateOne({ _id: userId }, { $unset: { disabled: "" } });
-        await accounts.updateOne({ _id: userId }, { $unset: { disabled: "" } });
+        await users.updateOne(query, { $unset: { disabled: "" } } as any);
+        await accounts.updateOne(query, { $unset: { disabled: "" } } as any);
         break;
       case "delete":
-        await users.updateOne({ _id: userId }, { $set: { flags: 8 } }); // deleted flag
-        await accounts.updateOne({ _id: userId }, { $set: { disabled: true } });
+        await users.updateOne(query, { $set: { flags: 8 } } as any);
+        await accounts.updateOne(query, { $set: { disabled: true } } as any);
         break;
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
