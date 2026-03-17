@@ -39,12 +39,12 @@ export function LoginButton() {
   return (
     <Button
       onClick={() =>
-        signIn("authentik", {
+        signIn("credentials", {
           callbackUrl,
         })
       }
     >
-      Login with Stoat SSO
+      Se connecter
     </Button>
   );
 }

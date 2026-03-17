@@ -68,9 +68,9 @@ export function reportCategoryTemplateResolutionResponse(
     case "Report Spam":
       return "Report spam may lead to additional action against your account.";
     case "Not Enough Evidence":
-      return "These report(s) have not been actioned at this time due to a lack of supporting evidence, if you have additional information to support your report, please either report individual relevant messages or send an email to contact@revolt.chat.";
+      return "These report(s) have not been actioned at this time due to a lack of supporting evidence, if you have additional information to support your report, please either report individual relevant messages or send an email to contact@vokx.org.";
     case "Clarification Needed":
-      return "These report(s) need clarification and no further action can be taken at this time.\nIf you have additional information to support your report, please either report individual relevant messages or send an email to contact@revolt.chat.";
+      return "These report(s) need clarification and no further action can be taken at this time.\nIf you have additional information to support your report, please either report individual relevant messages or send an email to contact@vokx.org.";
     case "Bridged Content":
       return "These report(s) concern bridged content and we cannot take any further action.\nIf appropriate, the content has been deleted.\nPlease notify the server's moderation team to deal with the matter on their end.\nIf you find the moderation team to be unresponsive, please follow up by reporting the server.";
     case "Acknowledge":

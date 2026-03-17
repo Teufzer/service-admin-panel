@@ -121,7 +121,8 @@ export function UserStrikeActions({
             <br />
             {reasonEditor()}
             Further violations will result in suspension or a permanent ban
-            depending on severity, please abide by the Acceptable Usage Policy.
+            depending on severity, please abide by the{" "}
+            <a href="https://vokx.org/aup" target="_blank">Acceptable Usage Policy</a>.
             <br />
             <br />
             <TextField.Root
@@ -180,7 +181,8 @@ export function UserStrikeActions({
               <br />
               {reasonEditor()}
               Further violations may result in a permanent ban depending on
-              severity, please abide by the Acceptable Usage Policy.
+              severity, please abide by the{" "}
+              <a href="https://vokx.org/aup" target="_blank">Acceptable Usage Policy</a>.
               <br />
               <br />
               <Flex gap="2">

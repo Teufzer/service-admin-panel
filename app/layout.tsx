@@ -16,8 +16,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Stoat Admin Panel",
-  description: "Platform management and moderation tools.",
+  title: "Vokx Admin Panel",
+  description: "Outils de gestion et de modération de la plateforme Vokx.",
 };
 
 export default function RootLayout({

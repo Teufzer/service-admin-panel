@@ -78,12 +78,12 @@ export async function strikeUser(
         ...reason.map((r) => `- ${r}`),
         "",
         type === "suspension"
-          ? "Further violations may result in a permanent ban depending on severity, please abide by the [Acceptable Usage Policy](https://stoat.chat/aup)."
-          : "Further violations will result in suspension or a permanent ban depending on severity, please abide by the [Acceptable Usage Policy](https://stoat.chat/aup).",
+          ? "Further violations may result in a permanent ban depending on severity, please abide by the [Acceptable Usage Policy](https://vokx.org/aup)."
+          : "Further violations will result in suspension or a permanent ban depending on severity, please abide by the [Acceptable Usage Policy](https://vokx.org/aup).",
         ...(caseId
           ? ["", `Case ID for your reference: **${caseId.substring(18)}**`]
           : ""),
-        "If you have further questions about this strike, please contact abuse@revolt.chat",
+        "If you have further questions about this strike, please contact abuse@vokx.org",
       ].join("\n"),
     });
   }
