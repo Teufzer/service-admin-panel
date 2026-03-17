@@ -3,12 +3,17 @@ import { redirect } from "next/navigation";
 
 import { checkPermission, flattenPermissionsFor } from "./rbacEngine";
 
+const IS_AUTH_DISABLED = process.env.NEXT_PUBLIC_AUTH_TYPE === "none";
+const OWNER_EMAIL = "owner@vokx.org";
+
 /**
  * Check whether the currently authorised user has a given scope and return them if such
  * @param scope Required scope
  * @returns User email
  */
 export async function getScopedUser(scope: string) {
+  if (IS_AUTH_DISABLED) return OWNER_EMAIL;
+
   const session = await getServerSession();
   if (!session?.user?.email) return redirect("/panel/access-denied");
 
@@ -32,6 +37,16 @@ export async function getScopedUser(scope: string) {
 export async function getUserWithScopes<T extends string>(
   scopes: T[],
 ): Promise<[string, Record<T, boolean>]> {
+  if (IS_AUTH_DISABLED) {
+    return [
+      OWNER_EMAIL,
+      scopes.reduce(
+        (r, s) => ({ ...r, [s]: true }),
+        {} as Record<T, boolean>,
+      ),
+    ];
+  }
+
   const session = await getServerSession();
   if (!session?.user?.email) return redirect("/panel/access-denied");
 
