@@ -12,8 +12,8 @@ import styles from "./layout.module.css";
 
 export const dynamic = 'force-dynamic';
 
-const HR_EXISTS = existsSync("app/panel/hr");
-const MOD_EXISTS = existsSync("app/panel/mod");
+const HR_EXISTS = true;
+const MOD_EXISTS = true;
 
 export default async function Layout({
   children,
