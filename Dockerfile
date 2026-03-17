@@ -1,24 +1,20 @@
-FROM node:20-alpine AS builder
+FROM oven/bun:1 AS builder
 
 WORKDIR /app
 
-RUN npm install -g pnpm
-
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm run build
+RUN bun run build
 
-FROM node:20-alpine
+FROM oven/bun:1
 
 WORKDIR /app
 
-RUN npm install -g pnpm
-
 COPY --from=builder /app/package.json ./
-COPY --from=builder /app/pnpm-lock.yaml* ./
+COPY --from=builder /app/bun.lockb ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/server ./server
@@ -27,4 +23,4 @@ COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3000
 
-CMD ["pnpm", "run", "start"]
+CMD ["bun", "run", "start"]
